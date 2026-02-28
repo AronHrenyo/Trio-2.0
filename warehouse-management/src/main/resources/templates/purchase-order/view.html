@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Purchase Order Details</title>
+</head>
+<body>
+
+<h2>Purchase Order Details</h2>
+
+<p><strong>Number:</strong> <span th:text="${purchaseOrder.purchaseOrderNumber}"></span></p>
+<p><strong>Date:</strong> <span th:text="${purchaseOrder.purchaseOrderDate}"></span></p>
+<p><strong>Status:</strong> <span th:text="${purchaseOrder.purchaseOrderStatus}"></span></p>
+<p><strong>Price Sum:</strong> <span th:text="${purchaseOrder.purchaseOrderPriceSum}"></span></p>
+<p><strong>VAT Sum:</strong> <span th:text="${purchaseOrder.purchaseOrderVatSum}"></span></p>
+
+<h3>Lines</h3>
+
+<table border="1">
+    <tr>
+        <th>SKU</th>
+        <th>Price</th>
+        <th>VAT Rate</th>
+        <th>Action</th>
+    </tr>
+
+    <tr th:each="line : ${purchaseOrder.purchaseOrderLines}">
+        <td th:text="${line.purchaseOrderLineSku}"></td>
+        <td th:text="${line.purchaseOrderLinePrice}"></td>
+        <td th:text="${line.purchaseOrderLineVatRate}"></td>
+        <td>
+            <a th:href="@{/purchase-order/{orderId}/delete-line/{lineId}
+                 (orderId=${purchaseOrder.purchaseOrderId},
+                  lineId=${line.purchaseOrderLineId})}"
+               onclick="return confirm('Delete this line?')">
+                Delete
+            </a>
+        </td>
+    </tr>
+</table>
+
+<a th:href="@{/purchase-order}">Back</a>
+
+</body>
+</html>

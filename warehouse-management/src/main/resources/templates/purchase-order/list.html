@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Purchase Orders</title>
+</head>
+<body>
+
+<h2>Purchase Orders</h2>
+
+<a th:href="@{/purchase-order/new}">Create New</a>
+
+<table border="1">
+    <tr>
+        <th>Number</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Price Sum</th>
+        <th>VAT Sum</th>
+        <th>Action</th>
+    </tr>
+
+    <tr th:each="po : ${purchaseOrders}">
+        <td th:text="${po.purchaseOrderNumber}"></td>
+        <td th:text="${po.purchaseOrderDate}"></td>
+        <td th:text="${po.purchaseOrderStatus}"></td>
+        <td th:text="${po.purchaseOrderPriceSum}"></td>
+        <td th:text="${po.purchaseOrderVatSum}"></td>
+        <td>
+            <a th:href="@{/purchase-order/{id}(id=${po.purchaseOrderId})}">
+                View
+            </a>
+        </td>
+        <td>
+            <a th:href="@{/purchase-order/{id}(id=${po.purchaseOrderId})}">
+                View
+            </a>
+
+            <a th:href="@{/purchase-order/edit/{id}(id=${po.purchaseOrderId})}">
+                Edit
+            </a>
+
+            <a th:href="@{/purchase-order/delete/{id}(id=${po.purchaseOrderId})}"
+               onclick="return confirm('Are you sure?')">
+                Delete
+            </a>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
