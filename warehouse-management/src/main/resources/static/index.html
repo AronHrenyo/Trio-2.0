@@ -1,18 +1,33 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+    <link rel="stylesheet" href="style.css">
     <title>Your first Spring application</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<p><a href="/hello">Greet the world!</a></p>
-
-<form action="/hello" method="GET" id="nameForm">
-    <div>
-        <label for="nameField">How should the app call you?</label>
-        <input name="myName" id="nameField">
-        <button>Greet me!</button>
+<div class="top">
+    <div class="image-credit">
+        picture from : https://www.extensiv.com/blog/warehouse-management
     </div>
-</form>
+</div>
+
+<div class="bottom">
+    <div class="container">
+        <h2>Welcome</h2>
+
+        <form action="/hello" method="GET" id="nameForm">
+            <label for="nameField">How should the app call you?</label>
+            <input name="myName" id="nameField" placeholder="Enter your name">
+            <button>Greet me!</button>
+        </form>
+
+        <a href="/hello">Greet the world!</a>
+    </div>
+</div>
+
+<footer>
+    © 2026 warehouse-management
+</footer>
 </body>
 </html>

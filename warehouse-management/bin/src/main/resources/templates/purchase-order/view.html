@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="stylesheet" href="view.css">
     <title>Purchase Order Details</title>
 </head>
 <body>
-
-<div class="container">
 
 <h2>Purchase Order Details</h2>
 
@@ -17,8 +14,6 @@
 <p><strong>VAT Sum:</strong> <span th:text="${purchaseOrder.purchaseOrderVatSum}"></span></p>
 
 <h3>Lines</h3>
-
-<div class="table-container">
 
 <table border="1">
     <tr>
@@ -44,7 +39,6 @@
 </table>
 
 <a th:href="@{/purchase-order}">Back</a>
-</div>
-</div>
+
 </body>
 </html>
