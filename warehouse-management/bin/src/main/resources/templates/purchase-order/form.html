@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Purchase Order</title>
+</head>
+<body>
+
+<h2>Create Purchase Order</h2>
+
+<form th:action="@{/templates/purchase-order}" th:object="${purchaseOrder}" method="post">
+
+    Number:
+    <input type="text" th:field="*{purchaseOrderNumber}" /><br/>
+
+    Date:
+    <input type="date" th:field="*{purchaseOrderDate}" /><br/>
+
+    Status:
+    <input type="text" th:field="*{purchaseOrderStatus}" /><br/>
+
+    Price Sum:
+    <input type="number" step="0.01" th:field="*{purchaseOrderPriceSum}" /><br/>
+
+    VAT Sum:
+    <input type="number" step="0.01" th:field="*{purchaseOrderVatSum}" /><br/>
+
+    <h3>Lines</h3>
+
+    <div th:each="line, stat : *{purchaseOrderLines}">
+        <input type="hidden"
+               th:field="*{purchaseOrderLines[__${stat.index}__].purchaseOrderLineId}" />
+        SKU:
+        <input type="text" th:field="*{purchaseOrderLines[__${stat.index}__].purchaseOrderLineSku}" />
+
+        Price:
+        <input type="number" step="0.01"
+               th:field="*{purchaseOrderLines[__${stat.index}__].purchaseOrderLinePrice}" />
+
+        VAT Rate:
+        <input type="number" step="0.01"
+               th:field="*{purchaseOrderLines[__${stat.index}__].purchaseOrderLineVatRate}" />
+        <br/>
+    </div>
+
+    <button type="submit">Save</button>
+</form>
+
+</body>
+</html>
