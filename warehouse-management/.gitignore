@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+### Spring ###
+application.properties
+application*.properties
+application.yml
+application*.yml

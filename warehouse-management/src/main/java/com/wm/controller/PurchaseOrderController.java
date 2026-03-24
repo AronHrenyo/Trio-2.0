@@ -1,86 +1,59 @@
 package com.wm.controller;
 
-import com.wm.model.PurchaseOrder;
-import com.wm.model.PurchaseOrderLine;
+import com.wm.entity.PurchaseOrder;
 import com.wm.repository.PurchaseOrderRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.List;
 
 @Controller
-@RequestMapping("/purchase-order")
-@RequiredArgsConstructor
 public class PurchaseOrderController {
 
     private final PurchaseOrderRepository purchaseOrderRepository;
 
-    @GetMapping
-    public String list(Model model) {
-        model.addAttribute("purchaseOrder", purchaseOrderRepository.findAll());
-        return "purchase-order/list";
+    public PurchaseOrderController(PurchaseOrderRepository purchaseOrderRepository) {
+        this.purchaseOrderRepository = purchaseOrderRepository;
     }
 
-    // Show create form
-    @GetMapping("/new")
-    public String showCreateForm(Model model) {
-        PurchaseOrder po = new PurchaseOrder();
-        po.setPurchaseOrderDate(LocalDate.now());
-        po.setPurchaseOrderLines(new ArrayList<>());
-        model.addAttribute("purchaseOrder", po);
-        return "purchase-order/form";
-    }
+    @GetMapping("/purchase-order-view") // List purchase orders: http://localhost:8080/purchase-order-view
+    public String listPurchaseOrders(
+            @RequestParam(value = "from", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(value = "to", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            Model model) {
 
-    // Save purchase order (create and update)
-    @PostMapping
-    public String save(@ModelAttribute PurchaseOrder purchaseOrder) {
-
-        // Set back-reference for lines
-        if (purchaseOrder.getPurchaseOrderLines() != null) {
-            for (PurchaseOrderLine line : purchaseOrder.getPurchaseOrderLines()) {
-                line.setPurchaseOrder(purchaseOrder);
-            }
+        List<PurchaseOrder> orders;
+        if (from != null && to != null) {
+            orders = purchaseOrderRepository.findByPurchaseOrderDateBetween(from, to);
+        } else {
+            orders = purchaseOrderRepository.findAll();
         }
 
+        model.addAttribute("orders", orders);
+        model.addAttribute("from", from);
+        model.addAttribute("to", to);
+
+        return "purchase-order/purchase-order-view"; //purchase-order-view.html
+    }
+
+    // Show the create form
+    @GetMapping("/purchase-order-create") // Create new order form: http://localhost:8080/purchase-order-create
+    public String showCreateForm(Model model) {
+        model.addAttribute("purchaseOrder", new PurchaseOrder());
+        return "purchase-order/purchase-order-create"; //purchase-order-create.html
+    }
+
+    // Handle form submission
+    @PostMapping("/purchase-order-create")
+    public String createPurchaseOrder(PurchaseOrder purchaseOrder) {
         purchaseOrderRepository.save(purchaseOrder);
-        return "redirect:/purchase-order";
-    }
-
-    // View details
-    @GetMapping("/{id}")
-    public String view(@PathVariable Integer id, Model model) {
-        PurchaseOrder po = purchaseOrderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Not found"));
-        model.addAttribute("purchaseOrder", po);
-        return "purchase-order/view";
-    }
-
-    // Show edit form
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Integer id, Model model) {
-        PurchaseOrder po = purchaseOrderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Not found"));
-
-        model.addAttribute("purchaseOrder", po);
-        return "purchase-order/form";
-    }
-
-    // Delete
-    @GetMapping("/{orderId}/delete-line/{lineId}")
-    public String deleteLine(@PathVariable Integer orderId,
-                             @PathVariable Integer lineId) {
-
-        PurchaseOrder po = purchaseOrderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Not found"));
-
-        po.getPurchaseOrderLines()
-                .removeIf(line -> line.getPurchaseOrderLineId().equals(lineId));
-
-        purchaseOrderRepository.save(po);
-
-        return "redirect:/purchase-order/edit/" + orderId;
+        return "redirect:/purchase-order-view"; //purchase-order-view.html
     }
 }

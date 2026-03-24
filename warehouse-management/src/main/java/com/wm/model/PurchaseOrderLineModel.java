@@ -6,8 +6,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-@Entity
-public class PurchaseOrderLine {
+public class PurchaseOrderLineModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +19,7 @@ public class PurchaseOrderLine {
 
     @ManyToOne
     @JoinColumn(name = "purchase_order_id", nullable = false)
-    private PurchaseOrder purchaseOrder;
+    private PurchaseOrderModel purchaseOrder;
 
 
 }

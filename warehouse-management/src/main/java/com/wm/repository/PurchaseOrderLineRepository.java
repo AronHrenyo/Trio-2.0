@@ -1,7 +1,14 @@
 package com.wm.repository;
 
-import com.wm.model.PurchaseOrderLine;
+import com.wm.entity.PurchaseOrderLine;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface PurchaseOrderLineRepository extends JpaRepository<PurchaseOrderLine, Integer> {
+import java.util.List;
+
+@Repository
+public interface PurchaseOrderLineRepository extends JpaRepository<PurchaseOrderLine, Long> {
+
+    List<PurchaseOrderLine> findByPurchaseOrder_PurchaseOrderId(Long purchaseOrderId);
+
 }

@@ -8,8 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data
-@Entity
-public class PurchaseOrder {
+public class PurchaseOrderModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,9 +22,9 @@ public class PurchaseOrder {
     private BigDecimal purchaseOrderVatSum;
 
     @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PurchaseOrderLine> purchaseOrderLines;
+    private List<PurchaseOrderLineModel> purchaseOrderLines;
 
-    public void addLine(PurchaseOrderLine line) {
+    public void addLine(PurchaseOrderLineModel line) {
         purchaseOrderLines.add(line);
         line.setPurchaseOrder(this);
     }
