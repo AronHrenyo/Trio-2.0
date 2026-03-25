@@ -20,56 +20,63 @@ public class PurchaseOrderLineService {
     private final PurchaseOrderLineRepository repository;
     private final PurchaseOrderRepository orderRepository;
 
+    // List all order lines
     public List<PurchaseOrderLine> findAll() {
         return repository.findAll();
     }
 
+    // Find order line by ID
     public PurchaseOrderLine findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order line not found with id: " + id));
     }
 
+    // Create a new order line
     public PurchaseOrderLine create(PurchaseOrderLine line) {
-        // kiszámoljuk a line összegét
+        // Calculate line totals
         calculateLineSums(line);
 
-        // mentés
+        // Save line
         PurchaseOrderLine saved = repository.save(line);
 
-        // frissítjük a parent order összegeit
+        // Update parent order totals
         updateOrderTotals(line.getPurchaseOrder());
 
         return saved;
     }
 
+    // Update an existing order line
     public PurchaseOrderLine update(Long id, PurchaseOrderLine line) {
         PurchaseOrderLine existing = findById(id);
 
         existing.setProduct(line.getProduct());
-        existing.setPartner(line.getPartner());
         existing.setPurchaseOrderLinePrice(line.getPurchaseOrderLinePrice());
         existing.setPurchaseOrderLineVatKey(line.getPurchaseOrderLineVatKey());
         existing.setPurchaseOrderLineQuantity(line.getPurchaseOrderLineQuantity());
 
+        // Recalculate totals for the line
         calculateLineSums(existing);
 
         PurchaseOrderLine saved = repository.save(existing);
 
+        // Update parent order totals
         updateOrderTotals(existing.getPurchaseOrder());
 
         return saved;
     }
 
+    // Delete an order line
     public void delete(Long id) {
         PurchaseOrderLine line = findById(id);
         PurchaseOrder order = line.getPurchaseOrder();
 
         repository.delete(line);
 
+        // Update parent order totals after deletion
         updateOrderTotals(order);
     }
 
-    // 🔹 segédfüggvények
+    // 🔹 Helper methods
 
     private void calculateLineSums(PurchaseOrderLine line) {
         BigDecimal qty = BigDecimal.valueOf(line.getPurchaseOrderLineQuantity());

@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,20 +13,20 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "purchase_order")
-public class PurchaseOrder {
+@Table(name = "sales_order")
+public class SalesOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long purchaseOrderId;
+    private Long salesOrderId;
 
-    private String purchaseOrderNumber;
-    private LocalDate purchaseOrderDate;
-    private String purchaseOrderStatus;
+    private String salesOrderNumber;
+    private LocalDate salesOrderDate;
+    private String salesOrderStatus;
 
-    private BigDecimal purchaseOrderNetSum;
-    private BigDecimal purchaseOrderVatSum;
-    private BigDecimal purchaseOrderGrossSum;
+    private BigDecimal salesOrderNetSum;
+    private BigDecimal salesOrderVatSum;
+    private BigDecimal salesOrderGrossSum;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "partner_id", nullable = false)

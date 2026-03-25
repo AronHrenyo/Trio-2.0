@@ -17,26 +17,30 @@ public class PurchaseOrderService {
 
     private final PurchaseOrderRepository repository;
 
+    // List all purchase orders
     public List<PurchaseOrder> findAll() {
         return repository.findAll();
     }
 
+    // Find a purchase order by ID
     public PurchaseOrder findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
     }
 
+    // Create a new purchase order
     public PurchaseOrder create(PurchaseOrder order) {
-
+        // Check for duplicate order number
         repository.findByPurchaseOrderNumber(order.getPurchaseOrderNumber())
                 .ifPresent(o -> {
                     throw new RuntimeException("Order number already exists: " + order.getPurchaseOrderNumber());
                 });
 
+        // Set default date and status
         order.setPurchaseOrderDate(LocalDate.now());
         order.setPurchaseOrderStatus("NEW");
 
-        // kezdeti összegek
+        // Initialize totals
         order.setPurchaseOrderNetSum(BigDecimal.ZERO);
         order.setPurchaseOrderVatSum(BigDecimal.ZERO);
         order.setPurchaseOrderGrossSum(BigDecimal.ZERO);
@@ -44,6 +48,7 @@ public class PurchaseOrderService {
         return repository.save(order);
     }
 
+    // Update an existing purchase order
     public PurchaseOrder update(Long id, PurchaseOrder order) {
         PurchaseOrder existing = findById(id);
 
@@ -53,8 +58,9 @@ public class PurchaseOrderService {
         return repository.save(existing);
     }
 
+    // Delete a purchase order
     public void delete(Long id) {
-        findById(id);
+        findById(id); // ensure it exists
         repository.deleteById(id);
     }
 }

@@ -1,6 +1,8 @@
 package com.wm.controller;
 
+import com.wm.entity.Partner;
 import com.wm.entity.PurchaseOrder;
+import com.wm.repository.PartnerRepository;
 import com.wm.repository.PurchaseOrderRepository;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -16,11 +18,15 @@ import java.util.List;
 public class PurchaseOrderController {
 
     private final PurchaseOrderRepository purchaseOrderRepository;
+    private final PartnerRepository partnerRepository;
 
-    public PurchaseOrderController(PurchaseOrderRepository purchaseOrderRepository) {
+    public PurchaseOrderController(PurchaseOrderRepository purchaseOrderRepository,
+                                   PartnerRepository partnerRepository) {
         this.purchaseOrderRepository = purchaseOrderRepository;
+        this.partnerRepository = partnerRepository;
     }
 
+    // List purchase orders with optional date filter
     @GetMapping("/purchase-order-view") // List purchase orders: http://localhost:8080/purchase-order-view
     public String listPurchaseOrders(
             @RequestParam(value = "from", required = false)
@@ -40,20 +46,30 @@ public class PurchaseOrderController {
         model.addAttribute("from", from);
         model.addAttribute("to", to);
 
-        return "purchase-order/purchase-order-view"; //purchase-order-view.html
+        return "purchase-order/purchase-order-view"; // purchase-order-view.html
     }
 
     // Show the create form
     @GetMapping("/purchase-order-create") // Create new order form: http://localhost:8080/purchase-order-create
     public String showCreateForm(Model model) {
         model.addAttribute("purchaseOrder", new PurchaseOrder());
-        return "purchase-order/purchase-order-create"; //purchase-order-create.html
+
+        // Pass the list of partners for the select dropdown
+        List<Partner> partners = partnerRepository.findAll();
+        model.addAttribute("partners", partners);
+
+        return "purchase-order/purchase-order-create"; // purchase-order-create.html
     }
 
     // Handle form submission
     @PostMapping("/purchase-order-create")
     public String createPurchaseOrder(PurchaseOrder purchaseOrder) {
+        // Ensure a partner is selected
+        if (purchaseOrder.getPartner() == null) {
+            throw new RuntimeException("Partner must be selected for a purchase order");
+        }
+
         purchaseOrderRepository.save(purchaseOrder);
-        return "redirect:/purchase-order-view"; //purchase-order-view.html
+        return "redirect:/purchase-order-view"; // redirect to purchase order list
     }
 }

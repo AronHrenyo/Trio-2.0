@@ -12,52 +12,117 @@
     <!-- Header -->
     <div class="text-center mb-5">
         <h1>Warehouse Management System</h1>
-        <p class="lead">Manage purchase orders, inventory, and operations efficiently</p>
+        <p class="lead">Manage purchase orders, partners, products, inventory, and operations efficiently</p>
     </div>
 
     <!-- Navigation Cards -->
     <div class="row g-4">
 
-        <!-- Purchase Orders -->
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
+        <!-- PURCHASE -->
+        <div class="col-md-3">
+            <h5 class="text-center mb-3">Purchase</h5>
+
+            <div class="card shadow-sm mb-3">
                 <div class="card-body text-center">
-                    <h5 class="card-title">Purchase Orders</h5>
-                    <p class="card-text">View and manage all purchase orders.</p>
-                    <a href="/purchase-order-view" class="btn btn-primary">View Orders</a>
+                    <h6 class="card-title">Purchase Orders</h6>
+                    <a href="/purchase-order-view" class="btn btn-primary btn-sm">View</a>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Create Order</h6>
+                    <a href="/purchase-order-create" class="btn btn-success btn-sm">Create</a>
                 </div>
             </div>
         </div>
 
-        <!-- Create Purchase Order -->
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
+        <!-- SALES -->
+        <div class="col-md-3">
+            <h5 class="text-center mb-3">Sales</h5>
+
+            <div class="card shadow-sm mb-3">
                 <div class="card-body text-center">
-                    <h5 class="card-title">Create Order</h5>
-                    <p class="card-text">Create a new purchase order.</p>
-                    <a href="/purchase-order-create" class="btn btn-success">Create Order</a>
+                    <h6 class="card-title">Sales Orders</h6>
+                    <a href="/sales-order-view" class="btn btn-primary btn-sm">View</a>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Create Order</h6>
+                    <a href="/sales-order-create" class="btn btn-success btn-sm">Create</a>
                 </div>
             </div>
         </div>
 
-        <!-- Inventory (placeholder) -->
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
+        <!-- INVOICES -->
+        <div class="col-md-3">
+            <h5 class="text-center mb-3">Invoices</h5>
+
+            <div class="card shadow-sm mb-3">
                 <div class="card-body text-center">
-                    <h5 class="card-title">Inventory</h5>
-                    <p class="card-text">Track stock levels and warehouse items.</p>
-                    <a href="#" class="btn btn-secondary disabled">Coming Soon</a>
+                    <h6 class="card-title">Invoices</h6>
+                    <a href="/invoice-view" class="btn btn-primary btn-sm">View</a>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Create Invoice</h6>
+                    <a href="/invoice-create" class="btn btn-success btn-sm">Create</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- MASTER DATA -->
+        <div class="col-md-3">
+            <h5 class="text-center mb-3">Master Data</h5>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Partners</h6>
+                    <a href="/partner-view" class="btn btn-primary btn-sm">View</a>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Create Partner</h6>
+                    <a href="/partner-create" class="btn btn-success btn-sm">Create</a>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Products</h6>
+                    <a href="/product-view" class="btn btn-primary btn-sm">View</a>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Create Product</h6>
+                    <a href="/product-create" class="btn btn-success btn-sm">Create</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- INVENTORY -->
+        <div class="col-md-3">
+            <h5 class="text-center mb-3">Inventory</h5>
+
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Inventory</h6>
+                    <a href="#" class="btn btn-secondary btn-sm disabled">Coming Soon</a>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- Footer -->
-    <div class="text-center mt-5 text-muted">
-        <p>&copy; 2026 Warehouse Management System</p>
-    </div>
-
-</div>
+    <!-- Insert footer -->
+    <div th:replace="fragments :: footer"></div>
 </body>
 </html>

@@ -23,10 +23,6 @@ public class PurchaseOrderLine {
     private PurchaseOrder purchaseOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "partner_id")
-    private Partner partner;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 

@@ -1,43 +1,55 @@
 package com.wm.controller;
 
 import com.wm.entity.Product;
-import com.wm.service.ProductService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import com.wm.repository.ProductRepository;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/products")
-@RequiredArgsConstructor
+@Controller
 public class ProductController {
 
-    private final ProductService service;
+    private final ProductRepository productRepository;
 
-    @GetMapping
-    public List<Product> getAll() {
-        return service.findAll();
+    public ProductController(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
-    @GetMapping("/{id}")
-    public Product getById(@PathVariable Long id) {
-        return service.findById(id);
+    // List products with optional name filter
+    @GetMapping("/product-view") // List products: http://localhost:8080/product-view
+    public String listProducts(
+            @RequestParam(value = "name", required = false) String name,
+            Model model) {
+
+        List<Product> products;
+
+        if (name != null && !name.isEmpty()) {
+            products = productRepository.findByProductNameContainingIgnoreCase(name);
+        } else {
+            products = productRepository.findAll();
+        }
+
+        model.addAttribute("products", products);
+        model.addAttribute("name", name);
+
+        return "product/product-view"; // product-view.html
     }
 
-    @PostMapping
-    public Product create(@RequestBody @Valid Product product) {
-        return service.create(product);
+    // Show the create form
+    @GetMapping("/product-create") // Create new product form: http://localhost:8080/product-create
+    public String showCreateForm(Model model) {
+        model.addAttribute("product", new Product());
+        return "product/product-create"; // product-create.html
     }
 
-    @PutMapping("/{id}")
-    public Product update(@PathVariable Long id,
-                          @RequestBody @Valid Product product) {
-        return service.update(id, product);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        service.delete(id);
+    // Handle form submission
+    @PostMapping("/product-create")
+    public String createProduct(Product product) {
+        productRepository.save(product);
+        return "redirect:/product-view"; // redirect to product list
     }
 }
