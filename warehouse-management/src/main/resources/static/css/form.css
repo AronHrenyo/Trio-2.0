@@ -17,7 +17,7 @@ body {
     align-content: center;
     color: white;
     height: 100%;
-    background-image: url(static/warehouse.jpeg);
+    background-image: url(../images/warehouse.jpeg);
     flex-direction: column;
 }
 

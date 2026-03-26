@@ -13,7 +13,7 @@ body {
 }
 
 .top {
-    background: url(warehouse.jpeg) center/cover no-repeat;
+    background: url(../images/warehouse.jpeg) center/cover no-repeat;
     position: absolute;
     width:100%;
     height: 50%;
