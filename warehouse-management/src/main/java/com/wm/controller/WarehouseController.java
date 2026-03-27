@@ -4,40 +4,74 @@ import com.wm.entity.Warehouse;
 import com.wm.service.WarehouseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
-@RestController
+@Controller
 @RequestMapping("/api/warehouses")
 @RequiredArgsConstructor
 public class WarehouseController {
 
     private final WarehouseService service;
 
+    // ✅ HTML oldal
+    @GetMapping("/warehouse-map") // http://localhost:8080/api/warehouses/warehouse-map
+    public String warehousesMap() {
+        return "warehouse/warehouse-map";
+    }
+
+    // ✅ JSON API
     @GetMapping
-    public List<Warehouse> getAll() {
-        return service.findAll();
+    @ResponseBody
+    public List<Map<String, Object>> getAll() {
+        return service.findAll().stream()
+                .map(this::toMap)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public Warehouse getById(@PathVariable Long id) {
-        return service.findById(id);
+    @ResponseBody
+    public Map<String, Object> getById(@PathVariable Long id) {
+        return toMap(service.findById(id));
     }
 
     @PostMapping
-    public Warehouse create(@RequestBody @Valid Warehouse warehouse) {
-        return service.create(warehouse);
+    @ResponseBody
+    public Map<String, Object> create(@RequestBody @Valid Warehouse warehouse) {
+        return toMap(service.create(warehouse));
     }
 
     @PutMapping("/{id}")
-    public Warehouse update(@PathVariable Long id,
-                            @RequestBody @Valid Warehouse warehouse) {
-        return service.update(id, warehouse);
+    @ResponseBody
+    public Map<String, Object> update(@PathVariable Long id,
+                                      @RequestBody @Valid Warehouse warehouse) {
+        return toMap(service.update(id, warehouse));
     }
 
     @DeleteMapping("/{id}")
+    @ResponseBody
     public void delete(@PathVariable Long id) {
         service.delete(id);
+    }
+
+    // ENTITY → MAP
+    private Map<String, Object> toMap(Warehouse w) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("warehouseId", w.getWarehouseId());
+        map.put("warehouseName", w.getWarehouseName());
+        map.put("warehouseCapacity", w.getWarehouseCapacity());
+
+        if (w.getWarehouseLocation() != null) {
+            map.put("lat", w.getWarehouseLocation().getY());
+            map.put("lon", w.getWarehouseLocation().getX());
+        } else {
+            map.put("lat", null);
+            map.put("lon", null);
+        }
+
+        return map;
     }
 }

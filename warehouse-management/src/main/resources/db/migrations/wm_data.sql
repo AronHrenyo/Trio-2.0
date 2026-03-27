@@ -1,3 +1,12 @@
+--CREATE DATABASE
+CREATE DATABASE wm
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LOCALE_PROVIDER = 'libc'
+    CONNECTION LIMIT = -1
+    IS_TEMPLATE = False;
+
 -- PARTNER
 INSERT INTO partner (partner_name, partner_email, partner_telephone, partner_address)
 VALUES ('Alpha Kft', 'alpha@kft.hu', '+361111111', 'Budapest'),
@@ -26,19 +35,19 @@ VALUES ('SKU001', 'Laptop', 'IT', 200000, 250000, 27),
        ('SKU010', 'USB', 'IT', 1500, 3000, 27);
 
 -- WAREHOUSE
-INSERT INTO warehouse (warehouse_name, warehouse_capacity)
-VALUES ('Raktár 1', 1000),
-       ('Raktár 2', 2000),
-       ('Raktár 3', 1500),
-       ('Raktár 4', 1200),
-       ('Raktár 5', 1800),
-       ('Raktár 6', 2200),
-       ('Raktár 7', 900),
-       ('Raktár 8', 1600),
-       ('Raktár 9', 1400),
-       ('Raktár 10', 2500);
+INSERT INTO public.warehouse (warehouse_id, warehouse_capacity, warehouse_name, warehouse_location) VALUES
+        (1, 1000, 'Raktár 1', ST_GeomFromText('POINT(20.784 47.497)', 4326)),  -- Budapest
+        (2, 2000, 'Raktár 2', ST_GeomFromText('POINT(18.233 46.0727)', 4326)), -- Pécs
+        (3, 1500, 'Raktár 3', ST_GeomFromText('POINT(19.040 47.497)', 4326)),  -- Debrecen
+        (4, 1100, 'Raktár 4', ST_GeomFromText('POINT(21.724 47.955)', 4326)),  -- Nyíregyháza
+        (5, 1600, 'Raktár 5', ST_GeomFromText('POINT(19.1011 46.8965)', 4326)),-- Kecskemét
+        (6, 1400, 'Raktár 6', ST_GeomFromText('POINT(18.416 47.186)', 4326)),  -- Székesfehérvár
+        (7, 2500, 'Raktár 7', ST_GeomFromText('POINT(16.584 47.685)', 4326)),  -- Sopron
+        (8, 1200, 'Raktár 8', ST_GeomFromText('POINT(17.633 46.357)', 4326)),  -- Szombathely
+        (9, 1800, 'Raktár 9', ST_GeomFromText('POINT(19.808 47.497)', 4326)),  -- Győr
+        (10, 1300, 'Raktár 10', ST_GeomFromText('POINT(20.640 46.771)', 4326)); -- Székesfehérvár
 
--- PURCHASE ORDER
+    -- PURCHASE ORDER
 INSERT INTO purchase_order (purchase_order_number, purchase_order_date, purchase_order_status, purchase_order_net_sum,
                             purchase_order_vat_sum, purchase_order_gross_sum, partner_id)
 VALUES ('PO001', '2025-01-01', 'OPEN', 100000, 27000, 127000, 1),
