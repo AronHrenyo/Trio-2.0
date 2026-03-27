@@ -7,6 +7,8 @@ CREATE DATABASE wm
     CONNECTION LIMIT = -1
     IS_TEMPLATE = False;
 
+CREATE EXTENSION postgis;
+
 -- PARTNER
 INSERT INTO partner (partner_name, partner_email, partner_telephone, partner_address)
 VALUES ('Alpha Kft', 'alpha@kft.hu', '+361111111', 'Budapest'),
@@ -35,7 +37,7 @@ VALUES ('SKU001', 'Laptop', 'IT', 200000, 250000, 27),
        ('SKU010', 'USB', 'IT', 1500, 3000, 27);
 
 -- WAREHOUSE
-INSERT INTO public.warehouse (warehouse_id, warehouse_capacity, warehouse_name, warehouse_location) VALUES
+INSERT INTO warehouse (warehouse_id, warehouse_capacity, warehouse_name, warehouse_location) VALUES
         (1, 1000, 'Raktár 1', ST_GeomFromText('POINT(20.784 47.497)', 4326)),  -- Budapest
         (2, 2000, 'Raktár 2', ST_GeomFromText('POINT(18.233 46.0727)', 4326)), -- Pécs
         (3, 1500, 'Raktár 3', ST_GeomFromText('POINT(19.040 47.497)', 4326)),  -- Debrecen
@@ -47,7 +49,7 @@ INSERT INTO public.warehouse (warehouse_id, warehouse_capacity, warehouse_name, 
         (9, 1800, 'Raktár 9', ST_GeomFromText('POINT(19.808 47.497)', 4326)),  -- Győr
         (10, 1300, 'Raktár 10', ST_GeomFromText('POINT(20.640 46.771)', 4326)); -- Székesfehérvár
 
-    -- PURCHASE ORDER
+-- PURCHASE ORDER
 INSERT INTO purchase_order (purchase_order_number, purchase_order_date, purchase_order_status, purchase_order_net_sum,
                             purchase_order_vat_sum, purchase_order_gross_sum, partner_id)
 VALUES ('PO001', '2025-01-01', 'OPEN', 100000, 27000, 127000, 1),
