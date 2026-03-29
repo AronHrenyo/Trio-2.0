@@ -2,9 +2,11 @@ package com.wm.controller;
 
 import com.wm.entity.Invoice;
 import com.wm.entity.Partner;
-import com.wm.repository.InvoiceRepository;
+import com.wm.service.InvoiceService;
+import com.wm.service.ProductService;
 import com.wm.repository.PartnerRepository;
 import com.wm.servicePDF.InvoicePdfService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,21 +19,15 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 public class InvoiceController {
 
-    private final InvoiceRepository invoiceRepository;
+    private final InvoiceService invoiceService;
     private final PartnerRepository partnerRepository;
+    private final ProductService productService;
     private final InvoicePdfService invoicePdfService;
 
-    public InvoiceController(InvoiceRepository invoiceRepository,
-                             PartnerRepository partnerRepository,
-                             InvoicePdfService invoicePdfService) {
-        this.invoiceRepository = invoiceRepository;
-        this.partnerRepository = partnerRepository;
-        this.invoicePdfService = invoicePdfService;
-    }
-
-    // List invoices with optional date filter
+    // ---------------- LIST ----------------
     @GetMapping("/invoice-view")
     public String listInvoices(
             @RequestParam(value = "from", required = false)
@@ -43,9 +39,9 @@ public class InvoiceController {
         List<Invoice> invoices;
 
         if (from != null && to != null) {
-            invoices = invoiceRepository.findByInvoiceDateBetween(from, to);
+            invoices = invoiceService.findByDateBetween(from, to);
         } else {
-            invoices = invoiceRepository.findAll();
+            invoices = invoiceService.findAll();
         }
 
         model.addAttribute("orders", invoices);
@@ -55,36 +51,59 @@ public class InvoiceController {
         return "invoice/invoice-view";
     }
 
-    // Show create form
+    // ---------------- CREATE ----------------
     @GetMapping("/invoice-create")
     public String showCreateForm(Model model) {
         model.addAttribute("invoice", new Invoice());
-
-        List<Partner> partners = partnerRepository.findAll();
-        model.addAttribute("partners", partners);
-
+        model.addAttribute("partners", partnerRepository.findAll());
         return "invoice/invoice-create";
     }
 
-    // Handle form submission
     @PostMapping("/invoice-create")
     public String createInvoice(Invoice invoice) {
 
         if (invoice.getPartner() == null) {
-            throw new RuntimeException("Partner must be selected for an invoice");
+            throw new RuntimeException("Partner must be selected");
         }
 
-        invoiceRepository.save(invoice);
+        invoiceService.create(invoice);
 
         return "redirect:/invoice-view";
     }
 
-    // ---------------- PDF EXPORT -----------------
+    // ---------------- EDIT ----------------
+    @GetMapping("/invoice/{id}/edit")
+    public String editInvoice(@PathVariable Long id, Model model) {
+
+        Invoice invoice = invoiceService.findById(id);
+
+        model.addAttribute("invoice", invoice);
+        model.addAttribute("products", productService.findAll());
+        model.addAttribute("partners", partnerRepository.findAll());
+
+        return "invoice/invoice-edit";
+    }
+
+    // ---------------- SAVE (EDIT) ----------------
+    @PostMapping("/invoice/save")
+    public String saveInvoice(@ModelAttribute Invoice invoice) {
+        if(invoice.getPartner() != null && invoice.getPartner().getPartnerId() != null) {
+            Partner partner = partnerRepository.findById(invoice.getPartner().getPartnerId())
+                    .orElseThrow(() -> new RuntimeException("Partner not found"));
+            invoice.setPartner(partner);
+        } else {
+            throw new RuntimeException("Partner is required");
+        }
+
+        invoiceService.save(invoice);
+        return "redirect:/invoice-view";
+    }
+
+    // ---------------- PDF ----------------
     @GetMapping("/invoice/{id}/pdf")
     public ResponseEntity<byte[]> downloadInvoicePdf(@PathVariable Long id) throws Exception {
 
-        Invoice invoice = invoiceRepository.findByIdWithDetails(id)
-                .orElseThrow(() -> new RuntimeException("Invoice not found"));
+        Invoice invoice = invoiceService.findById(id);
 
         byte[] pdf = invoicePdfService.generateInvoicePdf(invoice);
 

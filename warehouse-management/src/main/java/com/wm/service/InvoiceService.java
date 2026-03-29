@@ -1,6 +1,7 @@
 package com.wm.service;
 
 import com.wm.entity.Invoice;
+import com.wm.entity.InvoiceLine;
 import com.wm.repository.InvoiceRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,27 +18,29 @@ public class InvoiceService {
 
     private final InvoiceRepository repository;
 
-    // List all invoices
+    // ---------------- LIST ----------------
     public List<Invoice> findAll() {
         return repository.findAll();
     }
 
-    // Find invoice by ID
-    public Invoice findById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Invoice not found with id: " + id));
+    public List<Invoice> findByDateBetween(LocalDate from, LocalDate to) {
+        return repository.findByInvoiceDateBetween(from, to);
     }
 
-    // Create a new invoice
+    // ---------------- FIND ----------------
+    public Invoice findById(Long id) {
+        return repository.findByIdWithDetails(id)
+                .orElseThrow(() -> new RuntimeException("Invoice not found with id: " + id));
+    }
+
+    // ---------------- CREATE ----------------
     public Invoice create(Invoice invoice) {
 
-        // Check duplicate invoice number
         repository.findByInvoiceNumber(invoice.getInvoiceNumber())
                 .ifPresent(i -> {
-                    throw new RuntimeException("Invoice number already exists: " + invoice.getInvoiceNumber());
+                    throw new RuntimeException("Invoice number already exists");
                 });
 
-        // Default values
         invoice.setInvoiceDate(LocalDate.now());
         invoice.setInvoiceStatus("NEW");
 
@@ -48,17 +51,37 @@ public class InvoiceService {
         return repository.save(invoice);
     }
 
-    // Update invoice
-    public Invoice update(Long id, Invoice invoice) {
-        Invoice existing = findById(id);
+    // ---------------- SAVE (EDIT) ----------------
+    public void save(Invoice invoice) {
 
-        existing.setInvoiceNumber(invoice.getInvoiceNumber());
-        existing.setInvoiceStatus(invoice.getInvoiceStatus());
+        BigDecimal net = BigDecimal.ZERO;
+        BigDecimal vat = BigDecimal.ZERO;
+        BigDecimal gross = BigDecimal.ZERO;
 
-        return repository.save(existing);
+        if (invoice.getLines() != null) {
+            for (InvoiceLine line : invoice.getLines()) {
+
+                line.setInvoice(invoice);
+
+                if (line.getInvoiceLineNetSum() != null)
+                    net = net.add(line.getInvoiceLineNetSum());
+
+                if (line.getInvoiceLineVatSum() != null)
+                    vat = vat.add(line.getInvoiceLineVatSum());
+
+                if (line.getInvoiceLineGrossSum() != null)
+                    gross = gross.add(line.getInvoiceLineGrossSum());
+            }
+        }
+
+        invoice.setInvoiceNetSum(net);
+        invoice.setInvoiceVatSum(vat);
+        invoice.setInvoiceGrossSum(gross);
+
+        repository.save(invoice);
     }
 
-    // Delete invoice
+    // ---------------- DELETE ----------------
     public void delete(Long id) {
         findById(id);
         repository.deleteById(id);

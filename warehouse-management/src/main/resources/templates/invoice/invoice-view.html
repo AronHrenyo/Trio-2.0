@@ -42,6 +42,7 @@
             <th>VAT Sum</th>
             <th>Gross Sum</th>
             <th>PDF</th>
+            <th>Edit</th> <!-- ÚJ -->
         </tr>
         </thead>
         <tbody>
@@ -50,7 +51,6 @@
             <td th:text="${invoice.invoiceNumber}"></td>
             <td th:text="${invoice.invoiceDate}"></td>
 
-            <!-- NULL SAFE -->
             <td th:text="${invoice.partner != null ? invoice.partner.partnerName : 'N/A'}"></td>
 
             <td th:text="${invoice.invoiceStatus}"></td>
@@ -58,10 +58,19 @@
             <td th:text="${invoice.invoiceVatSum}"></td>
             <td th:text="${invoice.invoiceGrossSum}"></td>
 
+            <!-- PDF -->
             <td>
                 <a th:href="@{'/invoice/' + ${invoice.invoiceId} + '/pdf'}"
                    class="btn btn-sm btn-danger">
                     PDF
+                </a>
+            </td>
+
+            <!-- EDIT -->
+            <td>
+                <a th:href="@{'/invoice/' + ${invoice.invoiceId} + '/edit'}"
+                   class="btn btn-sm btn-primary">
+                    Edit
                 </a>
             </td>
         </tr>
