@@ -5,7 +5,6 @@ package com.wm.service;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +22,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.wm.TestHelper;
 import com.wm.WarehouseManagementApplication;
 import com.wm.entity.Invoice;
-import com.wm.entity.InvoiceLine;
 import com.wm.entity.Partner;
 import com.wm.repository.InvoiceRepository;
 import com.wm.repository.PartnerRepository;
@@ -54,7 +52,7 @@ public class InvoiceServiceTest {
 	
 	@BeforeAll
 	void createTestRecords() {
-		testPartner = partnerRepository.save(new Partner(null, "", "", "", ""));
+		testPartner = TestHelper.createTestPartner(partnerRepository);
 	}
 	
 	@Test
@@ -77,45 +75,40 @@ public class InvoiceServiceTest {
     
     @Test
     void testCreate_NotExists() {
-    	Invoice testInvoice = new Invoice();
-    	testInvoice.setInvoiceNumber(String.valueOf(System.currentTimeMillis()));
-    	testInvoice.setPartner(testPartner);
+    	Invoice testInvoice = Invoice.builder()
+				.invoiceNumber(String.valueOf(System.currentTimeMillis()))
+				.partner(testPartner)
+				.build();
+	
+    	
+    	
     	testInvoice = invoiceService.create(testInvoice);
     	testInvoiceIdList.add(testInvoice.getInvoiceId());
     	
-    	Invoice expectedInvoice = new Invoice(
-    			testInvoice.getInvoiceId(),
-    			testInvoice.getInvoiceNumber(),
-    			LocalDate.now(),
-    			"NEW",
-    			BigDecimal.ZERO,
-    			BigDecimal.ZERO,
-    			BigDecimal.ZERO,
-    			testPartner,
-    			null
-    	);
+    	Invoice expectedInvoice = TestHelper.createTestInvoice(testPartner);
+    	expectedInvoice.setInvoiceId(testInvoice.getInvoiceId());
+    	expectedInvoice.setInvoiceNumber(testInvoice.getInvoiceNumber());
+    	expectedInvoice.setInvoiceStatus("NEW");
+    	
+    	
     	TestHelper.assertEqualsInvoice(expectedInvoice, testInvoice);
     }
     
     @Test
     void testSave() {
     	Invoice testInvoice = TestHelper.createTestInvoice(testPartner, invoiceRepository, testInvoiceIdList);
-    	testInvoice.getLines().add(TestHelper.createTestInvoiceLine());
-    	testInvoice.getLines().add(TestHelper.createTestInvoiceLine());
+    	testInvoice.getLines().add(TestHelper.createTestInvoiceLine(null));
+    	testInvoice.getLines().add(TestHelper.createTestInvoiceLine(null));
     	invoiceService.save(testInvoice);
     	testInvoice = invoiceService.findById(testInvoice.getInvoiceId());
     	
-    	Invoice expectedInvoice = new Invoice(
-    			testInvoice.getInvoiceId(),
-    			testInvoice.getInvoiceNumber(),
-    			LocalDate.now(),
-    			"",
-    			BigDecimal.TEN.add(BigDecimal.TEN),
-    			BigDecimal.TEN.add(BigDecimal.TEN),
-    			BigDecimal.TEN.add(BigDecimal.TEN),
-    			testPartner,
-    			new ArrayList<InvoiceLine>()
-    	);
+    	
+    	Invoice expectedInvoice = TestHelper.createTestInvoice(testPartner);
+    	expectedInvoice.setInvoiceId(testInvoice.getInvoiceId());
+    	expectedInvoice.setInvoiceNumber(testInvoice.getInvoiceNumber());
+    	expectedInvoice.setInvoiceNetSum(BigDecimal.TEN.add(BigDecimal.TEN));
+    	expectedInvoice.setInvoiceVatSum(BigDecimal.TEN.add(BigDecimal.TEN));
+    	expectedInvoice.setInvoiceGrossSum(BigDecimal.TEN.add(BigDecimal.TEN));
     	
     	TestHelper.assertEqualsInvoice(expectedInvoice, testInvoice);
     }

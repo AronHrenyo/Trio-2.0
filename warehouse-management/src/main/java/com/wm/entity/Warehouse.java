@@ -10,6 +10,7 @@ import org.locationtech.jts.geom.Point;
 @AllArgsConstructor
 @Builder
 @Entity
+@EqualsAndHashCode
 @Table(name = "warehouse")
 public class Warehouse {
 

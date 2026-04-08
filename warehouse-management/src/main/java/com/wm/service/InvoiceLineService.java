@@ -75,7 +75,7 @@ public class InvoiceLineService {
 
     // 🔹 Helper methods
 
-    private void calculateLineSums(InvoiceLine line) {
+    public void calculateLineSums(InvoiceLine line) {
 
         BigDecimal qty = BigDecimal.valueOf(line.getInvoiceLineQuantity());
         BigDecimal price = line.getInvoiceLinePrice();
