@@ -1,4 +1,4 @@
-package com.wm.controller;
+package com.wm.controller.web;
 
 import com.wm.entity.Partner;
 import com.wm.entity.PurchaseOrder;
@@ -15,19 +15,19 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Controller
-public class PurchaseOrderController {
+public class PurchaseOrderWebController {
 
     private final PurchaseOrderRepository purchaseOrderRepository;
     private final PartnerRepository partnerRepository;
 
-    public PurchaseOrderController(PurchaseOrderRepository purchaseOrderRepository,
-                                   PartnerRepository partnerRepository) {
+    public PurchaseOrderWebController(PurchaseOrderRepository purchaseOrderRepository,
+                                      PartnerRepository partnerRepository) {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.partnerRepository = partnerRepository;
     }
 
     // List purchase orders with optional date filter
-    @GetMapping("/purchase-order-view") // List purchase orders: http://localhost:8080/purchase-order-view
+    @GetMapping("/purchase-order-view") // https://localhost:8443/purchase-order-view
     public String listPurchaseOrders(
             @RequestParam(value = "from", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
@@ -50,7 +50,7 @@ public class PurchaseOrderController {
     }
 
     // Show the create form
-    @GetMapping("/purchase-order-create") // Create new order form: http://localhost:8080/purchase-order-create
+    @GetMapping("/purchase-order-create") // https://localhost:8443/purchase-order-create
     public String showCreateForm(Model model) {
         model.addAttribute("purchaseOrder", new PurchaseOrder());
 
@@ -70,6 +70,6 @@ public class PurchaseOrderController {
         }
 
         purchaseOrderRepository.save(purchaseOrder);
-        return "redirect:/purchase-order-view"; // redirect to purchase order list
+        return "redirect:/purchase-order-view"; // redirect to purchase-order-view.html
     }
 }

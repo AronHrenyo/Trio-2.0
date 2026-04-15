@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class HomeControllerTest {
+public class HomeWebControllerTest {
 
     @Test
     public void contextLoads() {

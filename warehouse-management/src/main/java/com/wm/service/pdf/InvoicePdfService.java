@@ -1,4 +1,4 @@
-package com.wm.servicePDF;
+package com.wm.service.pdf;
 
 import com.wm.entity.Invoice;
 import org.springframework.stereotype.Service;

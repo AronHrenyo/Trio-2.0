@@ -1,6 +1,5 @@
-package com.wm.controller;
+package com.wm.controller.web;
 
-import com.wm.entity.Partner;
 import com.wm.entity.SalesOrder;
 import com.wm.repository.PartnerRepository;
 import com.wm.repository.SalesOrderRepository;
@@ -13,19 +12,20 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Controller
-public class SalesOrderController {
+@RequestMapping("/sales-order")
+public class SalesOrderWebController {
 
     private final SalesOrderRepository salesOrderRepository;
     private final PartnerRepository partnerRepository;
 
-    public SalesOrderController(SalesOrderRepository salesOrderRepository,
-                                PartnerRepository partnerRepository) {
+    public SalesOrderWebController(SalesOrderRepository salesOrderRepository,
+                                   PartnerRepository partnerRepository) {
         this.salesOrderRepository = salesOrderRepository;
         this.partnerRepository = partnerRepository;
     }
 
-    // List sales orders with optional date filter
-    @GetMapping("/sales-order-view")
+    // List sales orders
+    @GetMapping("/view")
     public String listSalesOrders(
             @RequestParam(value = "from", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
@@ -33,42 +33,32 @@ public class SalesOrderController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
             Model model) {
 
-        List<SalesOrder> orders;
-
-        if (from != null && to != null) {
-            orders = salesOrderRepository.findBySalesOrderDateBetween(from, to);
-        } else {
-            orders = salesOrderRepository.findAll();
-        }
+        List<SalesOrder> orders = (from != null && to != null) ?
+                salesOrderRepository.findBySalesOrderDateBetween(from, to) :
+                salesOrderRepository.findAll();
 
         model.addAttribute("orders", orders);
         model.addAttribute("from", from);
         model.addAttribute("to", to);
 
-        return "sales-order/sales-order-view";
+        return "sales-order/sales-order-view"; // Thymeleaf template
     }
 
     // Show create form
-    @GetMapping("/sales-order-create")
+    @GetMapping("/create")
     public String showCreateForm(Model model) {
         model.addAttribute("salesOrder", new SalesOrder());
-
-        List<Partner> partners = partnerRepository.findAll();
-        model.addAttribute("partners", partners);
-
+        model.addAttribute("partners", partnerRepository.findAll());
         return "sales-order/sales-order-create";
     }
 
     // Handle form submission
-    @PostMapping("/sales-order-create")
+    @PostMapping("/create")
     public String createSalesOrder(SalesOrder salesOrder) {
-
         if (salesOrder.getPartner() == null) {
             throw new RuntimeException("Partner must be selected for a sales order");
         }
-
         salesOrderRepository.save(salesOrder);
-
-        return "redirect:/sales-order-view";
+        return "redirect:/sales-order/view";
     }
 }

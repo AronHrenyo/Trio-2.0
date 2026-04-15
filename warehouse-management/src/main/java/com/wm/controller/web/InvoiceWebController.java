@@ -1,11 +1,11 @@
-package com.wm.controller;
+package com.wm.controller.web;
 
 import com.wm.entity.Invoice;
 import com.wm.entity.Partner;
 import com.wm.service.InvoiceService;
 import com.wm.service.ProductService;
 import com.wm.repository.PartnerRepository;
-import com.wm.servicePDF.InvoicePdfService;
+import com.wm.service.pdf.InvoicePdfService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
@@ -20,7 +20,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class InvoiceController {
+public class InvoiceWebController {
 
     private final InvoiceService invoiceService;
     private final PartnerRepository partnerRepository;
@@ -28,7 +28,7 @@ public class InvoiceController {
     private final InvoicePdfService invoicePdfService;
 
     // ---------------- LIST ----------------
-    @GetMapping("/invoice-view")
+    @GetMapping("/invoice-view") // https://localhost:8443/invoice-view
     public String listInvoices(
             @RequestParam(value = "from", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
@@ -52,7 +52,7 @@ public class InvoiceController {
     }
 
     // ---------------- CREATE ----------------
-    @GetMapping("/invoice-create")
+    @GetMapping("/invoice-create") // https://localhost:8443/invoice-create
     public String showCreateForm(Model model) {
         model.addAttribute("invoice", new Invoice());
         model.addAttribute("partners", partnerRepository.findAll());

@@ -1,4 +1,4 @@
-package com.wm.controller;
+package com.wm.controller.rest;
 
 import com.wm.entity.PurchaseOrderLine;
 import com.wm.service.PurchaseOrderLineService;
@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/order-lines")
 @RequiredArgsConstructor
-public class PurchaseOrderLineController {
+public class PurchaseOrderLineRestController {
 
     private final PurchaseOrderLineService service;
 

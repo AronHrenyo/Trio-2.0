@@ -1,4 +1,4 @@
-package com.wm.servicePDF;
+package com.wm.service.pdf;
 
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import org.thymeleaf.TemplateEngine;
