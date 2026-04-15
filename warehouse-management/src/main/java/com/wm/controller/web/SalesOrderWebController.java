@@ -12,7 +12,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Controller
-@RequestMapping("/sales-order")
 public class SalesOrderWebController {
 
     private final SalesOrderRepository salesOrderRepository;
@@ -25,7 +24,7 @@ public class SalesOrderWebController {
     }
 
     // List sales orders
-    @GetMapping("/view")
+    @GetMapping("/sales-order-view")
     public String listSalesOrders(
             @RequestParam(value = "from", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
@@ -45,7 +44,7 @@ public class SalesOrderWebController {
     }
 
     // Show create form
-    @GetMapping("/create")
+    @GetMapping("/sales-order-create")
     public String showCreateForm(Model model) {
         model.addAttribute("salesOrder", new SalesOrder());
         model.addAttribute("partners", partnerRepository.findAll());
@@ -53,7 +52,7 @@ public class SalesOrderWebController {
     }
 
     // Handle form submission
-    @PostMapping("/create")
+    @PostMapping("/sales-order-create")
     public String createSalesOrder(SalesOrder salesOrder) {
         if (salesOrder.getPartner() == null) {
             throw new RuntimeException("Partner must be selected for a sales order");
