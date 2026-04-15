@@ -78,7 +78,7 @@ public class PurchaseOrderLineService {
 
     // 🔹 Helper methods
 
-    private void calculateLineSums(PurchaseOrderLine line) {
+    public void calculateLineSums(PurchaseOrderLine line) {
         BigDecimal qty = BigDecimal.valueOf(line.getPurchaseOrderLineQuantity());
         BigDecimal price = line.getPurchaseOrderLinePrice();
         BigDecimal net = price.multiply(qty);
