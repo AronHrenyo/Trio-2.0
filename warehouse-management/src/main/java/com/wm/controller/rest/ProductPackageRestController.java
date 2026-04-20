@@ -45,6 +45,11 @@ public class ProductPackageRestController {
 
     @PostMapping
     public ProductPackage save(@RequestBody ProductPackageRequestDto request) {
+
+        if (request.getProductId() == null) {
+            throw new IllegalArgumentException("productId must not be null");
+        }
+
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
